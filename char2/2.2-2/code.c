@@ -15,59 +15,67 @@ for i = 1 to A.length-1
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <malloc.h>
 
-void init(int A[], int const maxNum)
-{
-    time_t tm;
-    
-    time(&tm);
-    srand((unsigned int )tm);
-    
-    printf("data init: ");
-    for (int i=0; i<maxNum; i++) {
-        A[i] = rand() % maxNum;
-        printf("%d ", A[i]);
-    }
-    printf("\n\n");
-}
+#include "../../init.h"
 
 int main(int argc, char **argv)
 {
-    int maxNum = 100;
-    if (argc != 1) {
-        maxNum = atoi(argv[1]);
+    if (argc != 3) {
+        printf("You should key in: %s <A.length, it is power(10, x)> <average num>\n", argv[0]);
+        return -1;
     }
-    int A[maxNum];
-    init(A, maxNum);
+
+    int powNum = atoi(argv[1]);
+    int avgNum = atoi(argv[2]);
+    int maxNum = (int)pow(10, powNum);
+    printf("cal num:%d averarg num:%d\n", maxNum, avgNum);
+    
+    int const size = sizeof(int) * maxNum;
+    int *A = (int*)malloc(size);
+    int *bkp = (int*)malloc(size);
+    init(bkp, maxNum);
 
     clock_t start, finish;  
-    double duration;  
-
-    start = clock(); 
+    double duration, avgDur=0.0;  
 
     int len = maxNum;
-    int inum = 0;
-    for (int i=0; i < len-1; i++) {
-        int min = i;
-        for (int j = i+1; j < len; j++) {
-            if (A[j] < A[min])
-                min = j;
-            ++inum;
+
+    for (int iavg=0; iavg<avgNum; iavg++) {
+        memcpy(A, bkp, size);
+
+        int inum = 0;
+        start = clock(); 
+
+        for (int i=0; i < len-1; i++) {
+            int min = i;
+            for (int j = i+1; j < len; j++) {
+                if (A[j] < A[min])
+                    min = j;
+                ++inum;
+            }
+
+            int temp;
+            temp = A[i];
+            A[i] = A[min];
+            A[min] = temp;
         }
 
-        int temp;
-        temp = A[i];
-        A[i] = A[min];
-        A[min] = temp;
-    }
-    finish = clock();  
-    duration = (double)(finish - start) / CLOCKS_PER_SEC;  
+#if 0
+        printf("rst: ");
+        for (int i=0; i<len; i++) {
+            printf("%d ", A[i]);
+        }
+        printf("\n");
+#endif
 
-    printf("rst(exec:step=%d): ", inum);
-    for (int i=0; i<len; i++) {
-        printf("%d ", A[i]);
+        finish = clock(); 
+        duration = (double)(finish - start) / CLOCKS_PER_SEC;  
+        printf("[%d]exec time: %f sec, exec:step=%d\n", iavg, duration, inum);
+
+        avgDur += duration;
     }
-    printf("\n");
-    printf("exec time: %f sec\n", duration);
+
+    printf("average time: %f\n", avgDur/avgNum);
 }
 
