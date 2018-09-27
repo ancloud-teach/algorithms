@@ -1,0 +1,50 @@
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# ./a.out 4 10
+cal num:10000 averarg num:10
+
+
+[0]exec time: 0.154768 sec, exec:step=49994999
+[1]exec time: 0.174700 sec, exec:step=49994999
+[2]exec time: 0.147444 sec, exec:step=49994999
+[3]exec time: 0.190057 sec, exec:step=49994999
+[4]exec time: 0.152313 sec, exec:step=49994999
+[5]exec time: 0.151018 sec, exec:step=49994999
+[6]exec time: 0.128162 sec, exec:step=49994999
+[7]exec time: 0.210446 sec, exec:step=49994999
+[8]exec time: 0.180065 sec, exec:step=49994999
+[9]exec time: 0.168418 sec, exec:step=49994999
+average time: 0.165739
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# ./a.out 4 10
+cal num:10000 averarg num:10
+
+
+[0]exec time: 0.128795 sec, exec:step=49994999
+[1]exec time: 0.138219 sec, exec:step=49994999
+[2]exec time: 0.129323 sec, exec:step=49994999
+[3]exec time: 0.162468 sec, exec:step=49994999
+[4]exec time: 0.162581 sec, exec:step=49994999
+[5]exec time: 0.202358 sec, exec:step=49994999
+[6]exec time: 0.220895 sec, exec:step=49994999
+[7]exec time: 0.224970 sec, exec:step=49994999
+[8]exec time: 0.124309 sec, exec:step=49994999
+[9]exec time: 0.157719 sec, exec:step=49994999
+average time: 0.165164
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# 
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# 
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# 
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# 
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# ./a.out 5 10
+cal num:100000 averarg num:10
+
+
+[0]exec time: 13.094565 sec, exec:step=704982703
+[1]exec time: 13.340641 sec, exec:step=704982703
+[2]exec time: 12.842316 sec, exec:step=704982703
+[3]exec time: 13.940782 sec, exec:step=704982703
+[4]exec time: 14.889460 sec, exec:step=704982703
+[5]exec time: 13.267364 sec, exec:step=704982703
+[6]exec time: 14.094649 sec, exec:step=704982703
+[7]exec time: 13.301320 sec, exec:step=704982703
+[8]exec time: 13.181941 sec, exec:step=704982703
+[9]exec time: 13.151237 sec, exec:step=704982703
+average time: 13.510428
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/char2/2.1# 
