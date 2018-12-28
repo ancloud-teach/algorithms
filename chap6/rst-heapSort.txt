@@ -1,0 +1,63 @@
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap6# ./a.out 2 10
+
+
+cal num:100 averarg num:10
+[0]exec time: 0.000011 sec, exec:step=499
+[1]exec time: 0.000010 sec, exec:step=499
+[2]exec time: 0.000009 sec, exec:step=499
+[3]exec time: 0.000009 sec, exec:step=499
+[4]exec time: 0.000009 sec, exec:step=499
+[5]exec time: 0.000009 sec, exec:step=499
+[6]exec time: 0.000008 sec, exec:step=499
+[7]exec time: 0.000008 sec, exec:step=499
+[8]exec time: 0.000008 sec, exec:step=499
+[9]exec time: 0.000008 sec, exec:step=499
+average time: 0.000009
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap6# 
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap6# 
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap6# 
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap6# ./a.out 3 10
+
+
+cal num:1000 averarg num:10
+[0]exec time: 0.000176 sec, exec:step=8313
+[1]exec time: 0.000148 sec, exec:step=8313
+[2]exec time: 0.000149 sec, exec:step=8313
+[3]exec time: 0.000169 sec, exec:step=8313
+[4]exec time: 0.000137 sec, exec:step=8313
+[5]exec time: 0.000136 sec, exec:step=8313
+[6]exec time: 0.000135 sec, exec:step=8313
+[7]exec time: 0.000134 sec, exec:step=8313
+[8]exec time: 0.000133 sec, exec:step=8313
+[9]exec time: 0.000134 sec, exec:step=8313
+average time: 0.000145
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap6# ./a.out 4 10
+
+
+cal num:10000 averarg num:10
+[0]exec time: 0.001709 sec, exec:step=116977
+[1]exec time: 0.001475 sec, exec:step=116977
+[2]exec time: 0.001531 sec, exec:step=116977
+[3]exec time: 0.001469 sec, exec:step=116977
+[4]exec time: 0.001469 sec, exec:step=116977
+[5]exec time: 0.001500 sec, exec:step=116977
+[6]exec time: 0.001538 sec, exec:step=116977
+[7]exec time: 0.001492 sec, exec:step=116977
+[8]exec time: 0.001471 sec, exec:step=116977
+[9]exec time: 0.001520 sec, exec:step=116977
+average time: 0.001517
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap6# ./a.out 5 10
+
+
+cal num:100000 averarg num:10
+[0]exec time: 0.021706 sec, exec:step=1497203
+[1]exec time: 0.021562 sec, exec:step=1497203
+[2]exec time: 0.021356 sec, exec:step=1497203
+[3]exec time: 0.021344 sec, exec:step=1497203
+[4]exec time: 0.022221 sec, exec:step=1497203
+[5]exec time: 0.022475 sec, exec:step=1497203
+[6]exec time: 0.020132 sec, exec:step=1497203
+[7]exec time: 0.023281 sec, exec:step=1497203
+[8]exec time: 0.020733 sec, exec:step=1497203
+[9]exec time: 0.020883 sec, exec:step=1497203
+average time: 0.021569
