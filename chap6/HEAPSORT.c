@@ -7,13 +7,14 @@ HEAPSORT(A)
         MAX-HEAPIFY(A, 1)
 */
 #include <stdio.h>
+#include "../init.h"
 
-extern void maxHeapify(int A[], int const length, int const heapsize, int i);
-extern void buildMaxHeapify(int A[], int const length);
+extern void maxHeapify(AData A[], int const length, int const heapsize, int i);
+extern void buildMaxHeapify(AData A[], int const length);
 
-void heapSort(int A[], int length)
+void heapSort(AData A[], int length)
 {
-    int tmp;
+    AData tmp;
     int const size = length;
 
     buildMaxHeapify(A, length);

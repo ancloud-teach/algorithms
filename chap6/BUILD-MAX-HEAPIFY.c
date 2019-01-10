@@ -5,9 +5,10 @@ BUILD-MAX-HEAPIFY(A)
         MAX-HEAPIFY(A, i)
 */
 #include <stdio.h>
+#include "../init.h"
 
-extern void maxHeapify(int A[], int const length, int const heapsize, int i);
-void buildMaxHeapify(int A[], int const length)
+extern void maxHeapify(AData A[], int const length, int const heapsize, int i);
+void buildMaxHeapify(AData A[], int const length)
 {
     int heapsize = length;
 

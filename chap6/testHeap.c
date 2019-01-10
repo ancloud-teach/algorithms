@@ -8,7 +8,7 @@
 
 #include "../init.h"
 
-extern void heapSort(int A[], int length);
+extern void heapSort(AData A[], int length);
 int istep = 0;
 
 int main(int argc, char **argv)
@@ -23,9 +23,8 @@ int main(int argc, char **argv)
     int maxNum = (int)pow(10, powNum);
     
     int const size = sizeof(int) * maxNum;
-    int *A = (int*)malloc(size);
-    int *bkp = (int*)malloc(size);
-    //tmpBufp = (int*)malloc(size/2 + 1);
+    AData *A = (AData*)malloc(size * ADATA_SIZE);
+    AData *bkp = (AData*)malloc(size * ADATA_SIZE);
     //int istep = 0;
     init(bkp, maxNum);
     printf("cal num:%d averarg num:%d\n", maxNum, avgNum);
@@ -35,7 +34,7 @@ int main(int argc, char **argv)
 
     int len = maxNum;
     for (int iavg=0; iavg<avgNum; iavg++) {
-        memcpy(A, bkp, size);
+        memcpy(A, bkp, size * ADATA_SIZE);
 
         istep = 0;
         start = clock(); 
@@ -43,7 +42,7 @@ int main(int argc, char **argv)
 #if 0
         printf("rst: ");
         for (int i=0; i<len; i++) {
-            printf("%d ", A[i]);
+            printf("%d ", A[i].value);
         }
         printf("\n");
 #endif

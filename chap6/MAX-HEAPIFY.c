@@ -11,28 +11,37 @@ MAX-HEAPIFY(A, i)
         MAX-HEAPIFY(A, largest)
 */
 #include <stdio.h>
+#include "../init.h"
+#include "./heap.h"
 
 extern int istep;
 
-void maxHeapify(int A[], int const length, int const heapsize, int i)
+/*
+ * @i, is start at 0
+ */
+void maxHeapify(AData A[], int const length, int const heapsize, int i)
 {
+    /*
     int ileft = i << 1;
     int iright = (i << 1) + 1;
+    */
+    int ileft = LEFT(i);
+    int iright = RIGHT(i);
     int ilargest = i;
 
-    int tmp;
-    if (ileft<heapsize && A[ileft]>A[i]){
+    AData tmp;
+    if (ileft<heapsize && A[ileft].value>A[i].value){
         ilargest = ileft;
     }
 
-    if (iright<heapsize && A[iright] > A[ilargest]) {
+    if (iright<heapsize && A[iright].value > A[ilargest].value) {
         ilargest = iright;
     }
 
     //printf ("%s:%d ilarget=%d, i=%d\n", __FILE__, __LINE__, ilargest, i);
 
     if (ilargest != i) {
-        istep++;
+        //istep++;
 
         tmp = A[i];
         A[i] = A[ilargest];
