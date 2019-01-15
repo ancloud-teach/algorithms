@@ -53,13 +53,13 @@ void heapIncreaseKey(AData A[], int i, AData key)
     if (key.value < A[i].value)
         return;
 
-    AData tmp;
-
     A[i] = key;
     if (i <= 0)
         return;
     int iparent = ((i+1) >> 1) - 1;
 
+#if 0	
+	AData tmp;
     while (i > 0 && A[iparent].value < A[i].value) {
         tmp = A[iparent];
         A[iparent] = A[i];
@@ -67,6 +67,14 @@ void heapIncreaseKey(AData A[], int i, AData key)
         i = iparent;
         iparent = ((i+1) >> 1) - 1;
     }
+#else
+	while (i > 0 && A[iparent].value < key.value) {
+        A[i] = A[iparent];
+        i = iparent;
+        iparent = ((i+1) >> 1) - 1;
+    }
+	A[i] = key;
+#endif
 }
 
 /*

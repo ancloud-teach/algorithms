@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     AData *A = (AData*)malloc(size * ADATA_SIZE);
     AData *bkp = (AData*)malloc(size * ADATA_SIZE);
     //int istep = 0;
-    init(bkp, maxNum);
+    init(bkp, maxNum, true);
     printf("cal num:%d averarg num:%d\n", maxNum, avgNum);
 
     clock_t start, finish;  
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         istep = 0;
         start = clock(); 
         heapSort(A, maxNum);
-#if 0
+#if 1
         printf("rst: ");
         for (int i=0; i<len; i++) {
             printf("%d ", A[i].value);
