@@ -28,22 +28,37 @@ CFLAGS+= -D $(PLATFORM)
 export LDFLAGS CFLAGS
 
 HEAP=Heap
+HEAPMIN=HeapMin
 MAX_PORITIY_QUEUE=MaxPorityQueue
-
-objY  = BUILD-MAX-HEAPIFY.o
-objY += MAX-HEAPIFY.o
-objY += HEAPSORT.o
+MIN_PORITIY_QUEUE=MinPorityQueue
 
 
 # check the object
 ifeq ($(MAKECMDGOALS), $(HEAP))
 TARGET = $(OUT_PATH)/$(HEAP)	
+objY  = BUILD-MAX-HEAPIFY.o
+objY += MAX-HEAPIFY.o
+objY += HEAPSORT.o
 objY  += test$(HEAP).o	
+
+# check the object
+else ifeq ($(MAKECMDGOALS), $(HEAPMIN))
+TARGET = $(OUT_PATH)/$(HEAPMIN)	
+objY  = MIN-PROITIY-QUEUE.o
+objY  += test$(HEAPMIN).o	
 
 else ifeq ($(MAKECMDGOALS), $(MAX_PORITIY_QUEUE))
 TARGET = $(OUT_PATH)/$(MAX_PORITIY_QUEUE)
+objY  = BUILD-MAX-HEAPIFY.o
+objY += MAX-HEAPIFY.o
+objY += HEAPSORT.o
 objY  += MAX-PROITIY-QUEUE.o	
 objY  += test$(MAX_PORITIY_QUEUE).o	
+
+else ifeq ($(MAKECMDGOALS), $(MIN_PORITIY_QUEUE))
+TARGET = $(OUT_PATH)/$(MIN_PORITIY_QUEUE)
+objY  = MIN-PROITIY-QUEUE.o	
+objY  += test$(MIN_PORITIY_QUEUE).o	
 
 else ifeq ($(MAKECMDGOALS), install*)
 
@@ -64,7 +79,25 @@ $(HEAP): mk_dir
 	@echo "install...."
 	make install PLATFORM=$(PLATFORM)
 	
+$(HEAPMIN): mk_dir 
+	make -C ./ -f $(TOPDIR)/Makefile.build	TARGET=$(TARGET) objY="$(objY)"
+	$(CC)  -o $(TARGET) built-in.o $(CFLAGS) $(LDFLAGS) 
+	
+	make clean
+	@echo
+	@echo "install...."
+	make install PLATFORM=$(PLATFORM)	
+	
 $(MAX_PORITIY_QUEUE): mk_dir 
+	make -C ./ -f $(TOPDIR)/Makefile.build	TARGET=$(TARGET) objY="$(objY)"
+	$(CC)  -o $(TARGET) built-in.o $(CFLAGS) $(LDFLAGS) 
+	
+	make clean
+	@echo
+	@echo "install...."
+	make install PLATFORM=$(PLATFORM)
+	
+$(MIN_PORITIY_QUEUE): mk_dir 
 	make -C ./ -f $(TOPDIR)/Makefile.build	TARGET=$(TARGET) objY="$(objY)"
 	$(CC)  -o $(TARGET) built-in.o $(CFLAGS) $(LDFLAGS) 
 	

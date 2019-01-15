@@ -13,7 +13,7 @@ struct Data {
 typedef struct Data AData;
 #define ADATA_SIZE      sizeof(AData)
 
-inline void init(AData A[], int const maxNum)
+inline void init(AData A[], int const maxNum, bool bdescend)
 {
     time_t tm;
     
@@ -22,7 +22,7 @@ inline void init(AData A[], int const maxNum)
    
     //printf("data init: ");
     for (int i=0; i<maxNum; i++) {
-        A[i].value = maxNum-i;
+        A[i].value = bdescend != false ? maxNum-i : i+1;
         //printf("%d, ", A[i].value);
     }
     //printf("\n\n");  

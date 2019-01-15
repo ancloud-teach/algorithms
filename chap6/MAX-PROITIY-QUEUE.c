@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 
 #include "../init.h"
 
@@ -77,6 +78,6 @@ MAX-HEAP-INSERT(A, key)
 void maxHeapInsert(AData A[], AData key, int *heapsizep)
 {
     *heapsizep += 1;
-    A[*heapsizep - 1].value = -1;
+    A[*heapsizep - 1].value = INT_MIN;
     heapIncreaseKey(A, *heapsizep - 1, key);
 }
