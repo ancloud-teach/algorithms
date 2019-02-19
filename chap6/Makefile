@@ -31,6 +31,7 @@ HEAP=Heap
 HEAPMIN=HeapMin
 MAX_PORITIY_QUEUE=MaxPorityQueue
 MIN_PORITIY_QUEUE=MinPorityQueue
+FIFO_QUEUE=FIFOQueue
 
 
 # check the object
@@ -59,6 +60,12 @@ else ifeq ($(MAKECMDGOALS), $(MIN_PORITIY_QUEUE))
 TARGET = $(OUT_PATH)/$(MIN_PORITIY_QUEUE)
 objY  = MIN-PROITIY-QUEUE.o	
 objY  += test$(MIN_PORITIY_QUEUE).o	
+
+else ifeq ($(MAKECMDGOALS), $(FIFO_QUEUE))
+TARGET = $(OUT_PATH)/$(FIFO_QUEUE)
+objY  = MIN-PROITIY-QUEUE.o	
+objY += FIFO-QUEUE.o	
+objY  += test$(FIFO_QUEUE).o	
 
 else ifeq ($(MAKECMDGOALS), install*)
 
@@ -98,6 +105,15 @@ $(MAX_PORITIY_QUEUE): mk_dir
 	make install PLATFORM=$(PLATFORM)
 	
 $(MIN_PORITIY_QUEUE): mk_dir 
+	make -C ./ -f $(TOPDIR)/Makefile.build	TARGET=$(TARGET) objY="$(objY)"
+	$(CC)  -o $(TARGET) built-in.o $(CFLAGS) $(LDFLAGS) 
+	
+	make clean
+	@echo
+	@echo "install...."
+	make install PLATFORM=$(PLATFORM)
+		
+$(FIFO_QUEUE): mk_dir 
 	make -C ./ -f $(TOPDIR)/Makefile.build	TARGET=$(TARGET) objY="$(objY)"
 	$(CC)  -o $(TARGET) built-in.o $(CFLAGS) $(LDFLAGS) 
 	

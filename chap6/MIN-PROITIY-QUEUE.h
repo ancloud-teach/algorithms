@@ -1,5 +1,6 @@
 #ifndef _MIN_PORITIY_QUEUE_H_
 #define _MIN_PORITIY_QUEUE_H_
+#include "../init.h"
 
 void heapMinSort(AData A[], int length);
 AData heapMin(AData A[]);

@@ -31,7 +31,7 @@ inline void init(AData A[], int const maxNum, bool bdescend)
 inline void printData(AData data[], int heapSize)
 {
     for (int i=0; i<heapSize; i++) {
-        printf ("index=%03d val=%d\n", i, data[i].value);
+        printf ("No.%03d val=%d, index=%d\n", i, data[i].value, data[i].index);
     }
 }
 
