@@ -41,6 +41,7 @@ int main(int argc, char **argv)
     int sleepTime = atoi(argv[1]);
 
     printf("You can key in: index=priority\n");
+	printf ("\tDelete node: Dindex, such as D0, D2, D3\n");
     char line[256];
     char *str = NULL;
     int index=0, pro = 0;
@@ -60,7 +61,12 @@ int main(int argc, char **argv)
             continue;
         }
         printf("You key in: %s\n", line);
-        if (!isdigit(line[0])) {
+		if (line[0] == 'D') {
+			sscanf(line, "D%d", &index);
+			printf("Delete the index：%d -\n", index);
+			heapDelete(gData, index, LEN_ADTA, &gHeapSize);
+			
+		} else if (!isdigit(line[0])) {
             //printf("You key in error(%s)\n", line);
         } else if (strchr(line, '=') != NULL) {
             sscanf(line, "%d=%d", &index, &pro);

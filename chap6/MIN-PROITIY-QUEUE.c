@@ -47,6 +47,7 @@ void minHeapify(AData A[], int const length, int const heapsize, int i)
     }
 }
 
+
 /*
 BUILD-MIN-HEAPIFY(A)
     A.heap-size = A.length
@@ -88,6 +89,22 @@ void heapMinSort(AData A[], int length)
     }
 }
 
+/*
+HEAP-DELETE(A, i)
+	A[i] = A[A.heap-size]
+	A.heap-size -= 1
+	MIN-HEAPIFY(A, i)
+*/
+/* @i: the index, it is start at 0 */
+void heapDelete(AData A[], int i, int length, int * heapsizep)
+{
+	if (i > length || i > *heapsizep) 
+		return;
+	
+	A[i] = A[*heapsizep - 1];
+	*heapsizep -= 1;
+	minHeapify(A, length, *heapsizep, i); 
+}
 
 /*
 HEAP-MINIMUM(A)
