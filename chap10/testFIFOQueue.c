@@ -10,11 +10,14 @@
 #include "./FIFO-QUEUE.h"
 #include "./STACK2QUEUE.h"
 #include "./FIFO-SLIST.h"
+#include "./FREE-LIST.h"
 
 #define QUEUE_SIZE        5
 //Queue<AData> *gQueuep = NULL;
 //Stack2Queue<AData> *gQueuep = NULL;
 FIFOSlist<AData> *gQueuep = NULL;
+FreeList<AData> *gFreep = NULL;
+
 
 
 void * thr_runTask(void *arg)
@@ -33,7 +36,7 @@ void * thr_runTask(void *arg)
             continue;
         }
         printf("dequeue data: %d\n\n", datap->value);
-        free(datap);
+        gFreep->freeObject(datap);
         
         //printf("LIFO queue pop min: %d, other data:%d\n", min.value, min.index);
         //printData(gData, gHeapSize);
@@ -56,6 +59,7 @@ int main(int argc, char **argv)
 	//gQueuep = new Queue<AData>(QUEUE_SIZE);
 	//gQueuep = new Stack2Queue<AData>(QUEUE_SIZE);
 	gQueuep = new FIFOSlist<AData>(QUEUE_SIZE);
+    gFreep = new FreeList<AData>(QUEUE_SIZE);
 
     pthread_t    tidRunTask;  
     int err = pthread_create(&tidRunTask, NULL, thr_runTask, &sleepTime);
@@ -77,7 +81,11 @@ int main(int argc, char **argv)
         } else {
             value = atoi(line);
             printf("enqueue value=%d + \n", value);
-            AData *insertp = (AData*)malloc(sizeof(AData));
+            AData *insertp = gFreep->allocateObject(true);
+            if (NULL == insertp) {
+                printf("Failed to allocate AData !!!\n");
+                continue;
+            }
             insertp->index = 0;
             insertp->value = value;
 			if (gQueuep->enqueue(insertp) == NULL ) {
