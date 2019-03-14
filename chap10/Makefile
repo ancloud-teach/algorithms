@@ -28,12 +28,17 @@ CFLAGS+= -D $(PLATFORM)
 export LDFLAGS CFLAGS
 
 LIFO_STACK=LIFOStack
+FIFO_QUEUE=FIFOQueue
 
 
 # check the object
 ifeq ($(MAKECMDGOALS), $(LIFO_STACK))
 TARGET = $(OUT_PATH)/$(LIFO_STACK)
 objY  = test$(LIFO_STACK).o
+
+else ifeq ($(MAKECMDGOALS), $(FIFO_QUEUE))
+TARGET = $(OUT_PATH)/$(FIFO_QUEUE)
+objY  = test$(FIFO_QUEUE).o
 
 else ifeq ($(MAKECMDGOALS), install*)
 
@@ -53,6 +58,15 @@ $(LIFO_STACK): mk_dir
 	@echo
 	@echo "install...."
 	make install PLATFORM=$(PLATFORM)
+	
+$(FIFO_QUEUE): mk_dir 
+	make -C ./ -f $(TOPDIR)/Makefile.build	TARGET=$(TARGET) objY="$(objY)"
+	$(CC)  -o $(TARGET) built-in.o $(CFLAGS) $(LDFLAGS) 
+	
+	make clean
+	@echo
+	@echo "install...."
+	make install PLATFORM=$(PLATFORM)	
 	
 mk_dir:
 	mkdir -p $(OUT_PATH)

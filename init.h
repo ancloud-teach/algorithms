@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 struct Data {
+    struct Data *nextp;
     int value;
     int index;
 };

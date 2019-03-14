@@ -9,11 +9,12 @@
 #include "../init.h"
 #include "./FIFO-QUEUE.h"
 #include "./STACK2QUEUE.h"
-
+#include "./FIFO-SLIST.h"
 
 #define QUEUE_SIZE        5
 //Queue<AData> *gQueuep = NULL;
-Stack2Queue<AData> *gQueuep = NULL;
+//Stack2Queue<AData> *gQueuep = NULL;
+FIFOSlist<AData> *gQueuep = NULL;
 
 
 void * thr_runTask(void *arg)
@@ -26,12 +27,13 @@ void * thr_runTask(void *arg)
         sleep(sleepTime);
         printf("runTask acked.!!!\n");
         
-        AData data;
-        if (gQueuep->dequeue(&data) < 0) {
+        AData *datap  = gQueuep->dequeue() ;
+        if (NULL == datap) {
             printf("Failed dequeue data from queue!!!\n");
             continue;
         }
-        printf("dequeue data: %d\n\n", data.index);
+        printf("dequeue data: %d\n\n", datap->value);
+        free(datap);
         
         //printf("LIFO queue pop min: %d, other data:%d\n", min.value, min.index);
         //printData(gData, gHeapSize);
@@ -52,7 +54,8 @@ int main(int argc, char **argv)
     int index=0, value = 0;
 
 	//gQueuep = new Queue<AData>(QUEUE_SIZE);
-	gQueuep = new Stack2Queue<AData>(QUEUE_SIZE);
+	//gQueuep = new Stack2Queue<AData>(QUEUE_SIZE);
+	gQueuep = new FIFOSlist<AData>(QUEUE_SIZE);
 
     pthread_t    tidRunTask;  
     int err = pthread_create(&tidRunTask, NULL, thr_runTask, &sleepTime);
@@ -74,10 +77,10 @@ int main(int argc, char **argv)
         } else {
             value = atoi(line);
             printf("enqueue value=%d + \n", value);
-            AData insert = {
-                0, value
-            };
-			if (gQueuep->enqueue(&insert) < 0 ) {
+            AData *insertp = (AData*)malloc(sizeof(AData));
+            insertp->index = 0;
+            insertp->value = value;
+			if (gQueuep->enqueue(insertp) == NULL ) {
                 printf("Faild enqueue value(%d) into queue!!!\n", value);
             }
         }
