@@ -8,10 +8,12 @@
 
 #include "../init.h"
 #include "./LIFO-STACK.h"
-
+#include "./LIFO-SLIST.h"
 
 #define STACK_SIZE        5
-Stack<AData> *gStackp = NULL;
+//Stack<AData> *gStackp = NULL;
+LIFOSlist<AData> *gStackp = NULL;
+
 
 void * thr_runTask(void *arg)
 {
@@ -26,12 +28,14 @@ void * thr_runTask(void *arg)
         if (gStackp->isEmpty()) 
             continue;
 
-        AData data;
-        if (gStackp->pop(&data) < 0) {
+        AData *datap = gStackp->pop();
+        if ( datap == NULL) {
             printf("Failed pop data from stack!!!\n");
             continue;
         }
-        printf("pop data: %d\n\n", data.index);
+        printf("pop data: %d\n\n", datap->value);
+
+        free(datap);
         
         //printf("LIFO queue pop min: %d, other data:%d\n", min.value, min.index);
         //printData(gData, gHeapSize);
@@ -51,7 +55,8 @@ int main(int argc, char **argv)
     char *str = NULL;
     int index=0, value = 0;
 
-	gStackp = new Stack<AData>(STACK_SIZE);
+	//gStackp = new Stack<AData>(STACK_SIZE);
+	gStackp = new LIFOSlist<AData>(STACK_SIZE);
 
     pthread_t    tidRunTask;  
     int err = pthread_create(&tidRunTask, NULL, thr_runTask, &sleepTime);
@@ -73,10 +78,10 @@ int main(int argc, char **argv)
         } else {
             value = atoi(line);
             printf("push value=%d + \n", value);
-            AData insert = {
-                0, value
-            };
-			if (gStackp->push(&insert) < 0 ) {
+            AData *insertp = (AData *)malloc(sizeof(AData));
+            insertp->index = 0;
+            insertp->value = value;
+			if (gStackp->push(insertp) == NULL ) {
                 printf("Faild push value(%d) into stack!!!\n", value);
             }
         }
