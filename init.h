@@ -14,6 +14,11 @@ struct Data {
 typedef struct Data AData;
 #define ADATA_SIZE      sizeof(AData)
 
+#define ARRAY_NIL       -1
+
+#define APLOG(fmt,...)  \
+  do { if (1) fprintf(stdout, "[APLOG]%s:%d "fmt, __FILE__,__LINE__, ##__VA_ARGS__); } while (0)
+
 inline void init(AData A[], int const maxNum, bool bdescend)
 {
     time_t tm;

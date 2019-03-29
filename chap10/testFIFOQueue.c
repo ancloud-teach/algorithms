@@ -11,6 +11,7 @@
 #include "./STACK2QUEUE.h"
 #include "./FIFO-SLIST.h"
 #include "./FREE-LIST.h"
+#include "SLIST.h"
 
 #define QUEUE_SIZE        5
 //Queue<AData> *gQueuep = NULL;
