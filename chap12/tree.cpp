@@ -41,8 +41,36 @@ void Tree::inorderWalk(struct treeNode *x)
         return ;
     this->inorderWalk(x->leftp);
     
-    printf("node: %d\n", x->key);
+    printf("node(0x%X): %d\n", (uint32_t)x, x->key);
 
     this->inorderWalk(x->rightp);
 }
+
+/*
+struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
+{
+    if (NULL == x || key == x->key)
+        return x;
+
+    if (key < x->key)
+        return this->search(x->leftp, key);
+    else 
+        return this->search(x->rightp, key);
+}
+*/
+struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
+{
+    while (x != NULL) {
+        if (key == x->key)
+            break;
+        
+        if (key < x->key)
+            x = x->leftp;
+        else 
+            x = x->rightp;
+    }
+
+    return x;
+}
+
 

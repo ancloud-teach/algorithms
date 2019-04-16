@@ -21,6 +21,7 @@ public:
     struct treeNode * getRoot(void);    
     void inorderWalk(struct treeNode *x);
     void insert(struct treeNode *insp);
+    struct treeNode * search(struct treeNode *x, uint32_t const key);
 
 private:
     struct treeNode *rootp;
