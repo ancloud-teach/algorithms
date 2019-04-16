@@ -33,11 +33,23 @@ int main(int argc, char **argv)
             if (line[0] == 'p') {
                 struct treeNode *rootp = tree.getRoot();
                 tree.inorderWalk(rootp);
-            } else {
+            } else if (line[0] == 'd') {
+                //- delete
+                uint32_t val = atoi(&line[1]); 
+                nodep = tree.search(tree.getRoot(), val);
+                if (NULL != nodep) {
+                    nodep = tree.del(nodep);
+                    if (NULL != nodep) {
+                        APLOG("del node OK. addr=0x%X, val=%d\n", (uint32_t)nodep, nodep->key);
+                        free(nodep);
+                    } 
+                }
+            }else {
                 if (line[0] == 's'){
+                    //- search
                     uint32_t val = atoi(&line[1]); 
                     nodep = tree.search(tree.getRoot(),val);
-                } else if (!strncmp(line, "min", 3)) {
+                }  else if (!strncmp(line, "min", 3)) {
                     nodep = tree.min(tree.getRoot());
                 } else if (!strncmp(line, "max", 3)) {
                     nodep = tree.max(tree.getRoot());

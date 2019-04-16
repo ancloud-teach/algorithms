@@ -26,9 +26,13 @@ public:
     struct treeNode * max(struct treeNode *x);
     struct treeNode * successor(struct treeNode *x);
     struct treeNode * predecessor(struct treeNode *x);
+    
+    struct treeNode * del(struct treeNode * delp);
 
 private:
-    struct treeNode *rootp;
+    struct treeNode *m_rootp;
+
+    void transplant(struct treeNode *dstp, struct treeNode *srcp);
 };
 #endif
 

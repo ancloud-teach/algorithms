@@ -2,7 +2,7 @@
 
 Tree::Tree(void)
 {
-    this->rootp = NULL;
+    this->m_rootp = NULL;
 }
 
 Tree::~Tree(void)
@@ -12,12 +12,12 @@ Tree::~Tree(void)
 
 struct treeNode * Tree::getRoot(void)
 {
-    return this->rootp;
+    return this->m_rootp;
 }
 void Tree::insert(struct treeNode *insp)
 {
     struct treeNode * y = NULL;
-    struct treeNode * x = this->rootp;
+    struct treeNode * x = this->m_rootp;
     while (x != NULL) {
         y = x;
         if (insp->key < x->key)
@@ -27,7 +27,7 @@ void Tree::insert(struct treeNode *insp)
     }
     insp->parentp = y;
     if (NULL == y) {
-        this->rootp = insp;
+        this->m_rootp = insp;
     } else if (insp->key < y->key) {
         y->leftp = insp;
     } else {
@@ -132,3 +132,36 @@ struct treeNode * Tree::predecessor(struct treeNode *x)
     return parentp;
 }
 
+
+void Tree::transplant(struct treeNode *dstp, struct treeNode *srcp)
+{
+    if (NULL == dstp->parentp){
+        this->m_rootp = srcp;
+    } else if (dstp == dstp->parentp->leftp) {
+        dstp->parentp->leftp = srcp;
+    } else {
+        dstp->parentp->rightp = srcp;
+    }
+    if (NULL != srcp){
+        srcp->parentp = dstp->parentp;
+    }    
+}
+struct treeNode * Tree::del(struct treeNode * delp)
+{
+    if (NULL == delp->leftp) {
+        this->transplant(delp, delp->rightp);
+    } else if (NULL == delp->rightp) {
+        this->transplant(delp, delp->leftp);
+    } else {
+        struct treeNode *y = this->min(delp->rightp);
+        if (y->parentp != delp) {
+            this->transplant(y, y->rightp);
+            y->rightp = delp->rightp;
+            y->rightp->parentp = y;
+        }
+        this->transplant(delp, y);
+        y->leftp = delp->leftp;
+        y->leftp->parentp = y;
+    }
+    return delp;
+}
