@@ -17,13 +17,17 @@ int main(int argc, char **argv)
     int value = 0;
 
     Tree tree;
-    struct treeNode *nodep;
+    struct treeNode *nodep, *sucp, *predp;
 
     while (1) {
         str = gets(line);
         if (str == NULL){
             continue;
         }
+        nodep=NULL;
+        sucp=NULL;
+        predp=NULL;
+        
         printf("You key in: %s\n", line);
         if (!isdigit(line[0])) {
             if (line[0] == 'p') {
@@ -32,17 +36,31 @@ int main(int argc, char **argv)
             } else {
                 if (line[0] == 's'){
                     uint32_t val = atoi(&line[1]); 
-                    nodep = tree.search(val);
+                    nodep = tree.search(tree.getRoot(),val);
                 } else if (!strncmp(line, "min", 3)) {
-                    nodep = tree.min();
+                    nodep = tree.min(tree.getRoot());
                 } else if (!strncmp(line, "max", 3)) {
-                    nodep = tree.max();
+                    nodep = tree.max(tree.getRoot());
                 }
 
                 if (NULL != nodep) {
-                    printf("search result: node addr=0x%X val=%d\n", (uint32_t)nodep, nodep->key);
+                    APLOG("search result: node addr=0x%X val=%d\n", (uint32_t)nodep, nodep->key);
+
+                    sucp = tree.successor(nodep);
+                    if (NULL != sucp) {
+                        APLOG("successor: addr=0x%X, val=%d\n", (uint32_t)sucp, sucp->key);
+                    } else {
+                        APLOG("Can't find the successor!!!\n");
+                    }
+
+                    predp = tree.predecessor(nodep);
+                    if (NULL != predp) {
+                        APLOG("predecessor: addr=0x%X, val=%d\n", (uint32_t)predp, predp->key);
+                    } else {
+                        APLOG("Can't find the predecessor!!!\n");
+                    }
                 } else {
-                    printf("Can't find the node!!!\n");
+                    APLOG("Can't find the node!!!\n");
                 }
             }
         } else {

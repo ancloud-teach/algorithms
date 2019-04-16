@@ -58,10 +58,8 @@ struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
         return this->search(x->rightp, key);
 }
 */
-struct treeNode * Tree::search(uint32_t const key)
-{
-    struct treeNode *x = this->rootp;
-    
+struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
+{    
     while (x != NULL) {
         if (key == x->key)
             break;
@@ -75,28 +73,62 @@ struct treeNode * Tree::search(uint32_t const key)
     return x;
 }
 
-struct treeNode * Tree::min(void)
+struct treeNode * Tree::min(struct treeNode *x)
 {
-    if (NULL == this->rootp)
+    if (NULL == x)
         return NULL;
     
-    struct treeNode *nodep = this->rootp;
-    while (NULL != nodep->leftp) {
-        nodep = nodep->leftp;
+    while (NULL != x->leftp) {
+        x = x->leftp;
     }
-    return nodep;
+    return x;
 }
 
-struct treeNode * Tree::max(void)
+struct treeNode * Tree::max(struct treeNode *x)
 {
-    if (NULL == this->rootp)
+    if (NULL == x)
         return NULL;
     
-    struct treeNode *nodep = this->rootp;
-    while (NULL != nodep->rightp) {
-        nodep = nodep->rightp;
+    while (NULL != x->rightp) {
+        x = x->rightp;
     }
-    return nodep;
+    return x;
 }
 
+/*
+ * find the node, whose key > x->key and the node is the min key 
+ */
+struct treeNode * Tree::successor(struct treeNode *x)
+{
+    if (NULL == x)
+        return NULL;
+    
+    if (NULL != x->rightp)
+        return this->min(x->rightp);
+
+    struct treeNode *parentp= x->parentp;
+    while (NULL!= parentp && x == parentp->rightp){
+        x = parentp;
+        parentp = x->parentp;
+    }
+
+    return parentp;
+}
+
+struct treeNode * Tree::predecessor(struct treeNode *x)
+{
+    if (NULL == x)
+        return NULL;
+    
+    if (NULL != x->leftp)
+        return this->max(x->leftp);
+
+    struct treeNode *parentp= x->parentp;
+    while (NULL!= parentp && x == parentp->leftp){
+        x = parentp;
+        parentp = x->parentp;
+    }
+
+    return parentp;
+}
 
