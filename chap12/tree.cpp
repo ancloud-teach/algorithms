@@ -58,8 +58,10 @@ struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
         return this->search(x->rightp, key);
 }
 */
-struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
+struct treeNode * Tree::search(uint32_t const key)
 {
+    struct treeNode *x = this->rootp;
+    
     while (x != NULL) {
         if (key == x->key)
             break;
@@ -71,6 +73,30 @@ struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
     }
 
     return x;
+}
+
+struct treeNode * Tree::min(void)
+{
+    if (NULL == this->rootp)
+        return NULL;
+    
+    struct treeNode *nodep = this->rootp;
+    while (NULL != nodep->leftp) {
+        nodep = nodep->leftp;
+    }
+    return nodep;
+}
+
+struct treeNode * Tree::max(void)
+{
+    if (NULL == this->rootp)
+        return NULL;
+    
+    struct treeNode *nodep = this->rootp;
+    while (NULL != nodep->rightp) {
+        nodep = nodep->rightp;
+    }
+    return nodep;
 }
 
 

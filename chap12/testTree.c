@@ -17,6 +17,7 @@ int main(int argc, char **argv)
     int value = 0;
 
     Tree tree;
+    struct treeNode *nodep;
 
     while (1) {
         str = gets(line);
@@ -28,13 +29,20 @@ int main(int argc, char **argv)
             if (line[0] == 'p') {
                 struct treeNode *rootp = tree.getRoot();
                 tree.inorderWalk(rootp);
-            } else if (line[0] == 's'){
-                uint32_t val = atoi(&line[1]); 
-                struct treeNode *nodep = tree.search(tree.getRoot(), val);
+            } else {
+                if (line[0] == 's'){
+                    uint32_t val = atoi(&line[1]); 
+                    nodep = tree.search(val);
+                } else if (!strncmp(line, "min", 3)) {
+                    nodep = tree.min();
+                } else if (!strncmp(line, "max", 3)) {
+                    nodep = tree.max();
+                }
+
                 if (NULL != nodep) {
                     printf("search result: node addr=0x%X val=%d\n", (uint32_t)nodep, nodep->key);
                 } else {
-                    printf("Can't find the node(val=%d)!!!\n", val);
+                    printf("Can't find the node!!!\n");
                 }
             }
         } else {
