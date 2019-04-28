@@ -1,8 +1,12 @@
+#include <stdio.h>
 #include "./tree.h"
+#include <Lib/define/global_define.h>
 
 Tree::Tree(void)
 {
     this->m_rootp = NULL;
+    this->m_size = 0;
+    APLOG("------ m size=%d\n", m_size);
 }
 
 Tree::~Tree(void)
@@ -20,7 +24,14 @@ void Tree::insert(struct treeNode *insp)
     struct treeNode * x = this->m_rootp;
     while (x != NULL) {
         y = x;
-        if (insp->key < x->key)
+        if (insp->key == x->key){
+            while (NULL != x->nextp) {
+                x = x->nextp;                
+            }
+            x->nextp = insp;
+            insp->parentp = x;
+            return ;
+        } else if (insp->key < x->key)
             x = x->leftp;
         else 
             x = x->rightp;
@@ -33,17 +44,30 @@ void Tree::insert(struct treeNode *insp)
     } else {
         y->rightp = insp;
     }
+    this->m_size++;
 }
 
-void Tree::inorderWalk(struct treeNode *x)
+void Tree::inorderWalk(struct treeNode *x, void (* print)(void *datap))
 {
     if (NULL == x) 
         return ;
-    this->inorderWalk(x->leftp);
-    
-    printf("node(0x%X): %d\n", (uint32_t)x, x->key);
+    this->inorderWalk(x->leftp, print);
 
-    this->inorderWalk(x->rightp);
+    printf("node(0x%x): %d color=%s\t(par=0x%x, left=0x%x, right=0x%x, next=0x%x)--\n", (uint32_t)x, x->key, x->color==RED?"Red":"Black",
+            (uint32_t)x->parentp, (uint32_t)x->leftp, (uint32_t)x->rightp, (uint32_t)x->nextp);
+    if (NULL != print)    
+        print(x->datap);
+    struct treeNode *samep = x->nextp;
+    while (NULL != samep) {
+        printf("same(0x%x): %d\t(par=0x%x, left=0x%x, right=0x%x, next=0x%x)\n", (uint32_t)samep, samep->key,
+            (uint32_t)samep->parentp, (uint32_t)samep->leftp, (uint32_t)samep->rightp, (uint32_t)samep->nextp);
+        if (NULL != print)    
+            print(samep->datap);
+        
+        samep =samep->nextp;
+    }
+
+    this->inorderWalk(x->rightp, print);
 }
 
 /*
@@ -148,6 +172,36 @@ void Tree::transplant(struct treeNode *dstp, struct treeNode *srcp)
 }
 struct treeNode * Tree::del(struct treeNode * delp)
 {
+    if (delp->nextp != NULL) {
+        struct treeNode *nextp = delp->nextp;
+        
+        nextp->leftp = delp->leftp;
+        nextp->rightp = delp->rightp;
+        nextp->parentp = delp->parentp;
+        if (NULL != delp->leftp) {
+            delp->leftp->parentp = nextp;
+        } 
+        if (NULL != delp->rightp) {
+            delp->rightp->parentp = nextp;
+        }
+        
+        //APLOG("nextp=0x%x\n", (uint32_t)nextp);
+        if (NULL == delp->parentp){
+            this->m_rootp = nextp;
+        } else if (delp == delp->parentp->leftp){
+            //APLOG("left\n");
+            delp->parentp->leftp = nextp;
+        }
+        else if (delp == delp->parentp->rightp){
+            delp->parentp->rightp =nextp;
+            //APLOG("right. par=0x%d, par->righ=0x%x, next=0x%x\n", delp->parentp, delp->parentp->rightp, nextp);
+        } else {
+            delp->parentp->nextp = nextp;
+        }
+        this->m_size--;
+        return delp;
+    }
+    
     if (NULL == delp->leftp) {
         this->transplant(delp, delp->rightp);
     } else if (NULL == delp->rightp) {
@@ -163,5 +217,6 @@ struct treeNode * Tree::del(struct treeNode * delp)
         y->leftp = delp->leftp;
         y->leftp->parentp = y;
     }
+    this->m_size--;
     return delp;
 }

@@ -2,16 +2,23 @@
 #define _TREE_H_
 #include <unistd.h>
 #include <stdint.h>
-#include "../init.h"
 
+enum RBColor {
+    BLACK=0,
+    RED
+};
 struct treeNode {
     uint32_t key;
     struct treeNode *leftp;
     struct treeNode *rightp;
+    struct treeNode *nextp;
     struct treeNode *parentp;
+
+    enum RBColor color;
 
     void * datap;
 };
+
 
 class Tree {
 public:
@@ -19,7 +26,7 @@ public:
     Tree(void);
     ~Tree(void);
     struct treeNode * getRoot(void);    
-    void inorderWalk(struct treeNode *x);
+    void inorderWalk(struct treeNode *x, void (* print)(void *datap)=NULL);
     void insert(struct treeNode *insp);
     struct treeNode * search(struct treeNode *x, uint32_t const key);
     struct treeNode * min(struct treeNode *x);
@@ -29,8 +36,9 @@ public:
     
     struct treeNode * del(struct treeNode * delp);
 
-private:
+protected:
     struct treeNode *m_rootp;
+    uint32_t m_size;
 
     void transplant(struct treeNode *dstp, struct treeNode *srcp);
 };
