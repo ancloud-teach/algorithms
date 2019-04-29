@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <time.h>
+#include <math.h>
 #include <unistd.h>
 
 #include "../init.h"
@@ -11,6 +12,12 @@
 
 int main(int argc, char **argv)
 {
+    int maxNum= 100;
+    if (argc ==2) {
+        int powNum = atoi(argv[1]);
+        maxNum = (int)pow(10, powNum);
+    }
+    
     printf("You can key in the value, which you would be push in\n");
     char line[256];
     char *str = NULL;
@@ -27,7 +34,8 @@ int main(int argc, char **argv)
         insp->key = data[i];
         tree.insert(insp);
     }
-    for (int i=61; i<500; i++) {
+    
+    for (int i=61; i<maxNum; i++) {
         struct treeNode * insp = (struct treeNode *)malloc(sizeof(struct treeNode));
         memset(insp, 0, sizeof(struct treeNode));
         insp->key = i;
@@ -63,7 +71,16 @@ int main(int argc, char **argv)
                 if (line[0] == 's'){
                     //- search
                     uint32_t val = atoi(&line[1]); 
+                    clock_t start, finish;  
+                    double duration;  
+                    start = clock(); 
+                    
                     nodep = tree.search(tree.getRoot(),val);
+
+                    finish = clock(); 
+                    duration = (double)(finish - start) / CLOCKS_PER_SEC;  
+                    printf("exec time: %f sec\n", duration);
+        
                 }  else if (!strncmp(line, "min", 3)) {
                     nodep = tree.min(tree.getRoot());
                 } else if (!strncmp(line, "max", 3)) {
