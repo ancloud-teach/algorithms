@@ -1,0 +1,22 @@
+root@ubuntu-14-10-server:/mnt/hgfs/slLearn/algorithms/chap13# ./out/PC/RBtree 5
+Init OK
+s99
+You key in: s99
+Tree exec time: 0.000003 sec
+RBtree exec time: 0.000003 sec
+s999
+You key in: s999
+Tree exec time: 0.000018 sec
+RBtree exec time: 0.000003 sec
+s9999
+You key in: s9999
+Tree exec time: 0.000162 sec
+RBtree exec time: 0.000002 sec
+s9999
+You key in: s9999
+Tree exec time: 0.000258 sec
+RBtree exec time: 0.000002 sec
+s99999
+You key in: s99999
+Tree exec time: 0.001331 sec
+RBtree exec time: 0.000002 sec
