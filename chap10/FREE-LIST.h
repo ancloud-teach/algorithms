@@ -83,8 +83,8 @@ public:
     ~FreeList(void)
     {
         free(this->m_nextp);
-        free(this->m_nextp);
-        free(this->m_nextp);
+        free(this->m_prevp);
+        free(this->m_datap);
     }
     
     T * allocateObject(bool const bClr)
