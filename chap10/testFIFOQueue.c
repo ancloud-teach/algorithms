@@ -7,16 +7,16 @@
 #include <unistd.h>
 
 #include "../init.h"
-#include "./FIFO-QUEUE.h"
+//#include "./FIFO-QUEUE.h"
 #include "./STACK2QUEUE.h"
 #include "./FIFO-SLIST.h"
 #include "./FREE-LIST.h"
 #include "SLIST.h"
 
 #define QUEUE_SIZE        5
-//Queue<AData> *gQueuep = NULL;
+//Queue *gQueuep = NULL;
 //Stack2Queue<AData> *gQueuep = NULL;
-FIFOSlist<AData> *gQueuep = NULL;
+FIFOSlist *gQueuep = NULL;
 FreeList<AData> *gFreep = NULL;
 
 
@@ -31,7 +31,7 @@ void * thr_runTask(void *arg)
         sleep(sleepTime);
         printf("runTask acked.!!!\n");
         
-        AData *datap  = gQueuep->dequeue() ;
+        AData *datap  = (AData*)gQueuep->dequeue() ;
         if (NULL == datap) {
             printf("Failed dequeue data from queue!!!\n");
             continue;
@@ -57,9 +57,9 @@ int main(int argc, char **argv)
     char *str = NULL;
     int index=0, value = 0;
 
-	//gQueuep = new Queue<AData>(QUEUE_SIZE);
+	//gQueuep = new Queue(QUEUE_SIZE);
 	//gQueuep = new Stack2Queue<AData>(QUEUE_SIZE);
-	gQueuep = new FIFOSlist<AData>(QUEUE_SIZE);
+	gQueuep = new FIFOSlist(QUEUE_SIZE);
     gFreep = new FreeList<AData>(QUEUE_SIZE);
 
     pthread_t    tidRunTask;  
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
             }
             insertp->index = 0;
             insertp->value = value;
-			if (gQueuep->enqueue(insertp) == NULL ) {
+			if (gQueuep->enqueue(insertp) < 0 ) {
                 printf("Faild enqueue value(%d) into queue!!!\n", value);
             }
         }
