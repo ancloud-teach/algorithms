@@ -1,19 +1,28 @@
 #ifndef _FIFO_SLIST_H_
 #define _FIFO_SLIST_H_
 
-#include "./SLIST.h"
 
-template <class T>
+struct fifoNode {
+    struct fifoNode *nextp;
+    void * datap;
+};
+
+#include "./SLIST.h"
+#include "./FREE-LIST.h"
+
 class FIFOSlist {
 public:
     FIFOSlist(int const size)
     {
         this->m_size = size;
         this->m_top = 0;
+
+        this->m_memp = new FreeList<struct fifoNode>(size);
     }
 
 	~FIFOSlist(void)
 	{
+	    delete this->m_memp;
 	}
 
     bool isEmpty(void) 
@@ -26,34 +35,39 @@ public:
 		return this->m_top >= this->m_size;
 	}
 	
-	T* enqueue(T *valp)
+	int enqueue(void *valp)
     {
         if (this->isFull())
-            return NULL;
-        
-        m_list.insert(valp);
+            return -1;
+
+        struct fifoNode *nodep = this->m_memp->allocateObject(true);
+        nodep->datap = valp;
+        m_list.insert(nodep);
         this->m_top++;
 
-        return valp;
+        return 0;
     }   
 
-    T* dequeue(void)
+    void* dequeue(void)
     {
         if (this->isEmpty())
             return NULL;
 
-        T* delp = this->m_list.tail();
+        struct fifoNode* delp = this->m_list.tail();
         this->m_list.del(delp);
         this->m_top--;
-        
-        return delp;
+
+        void *valp = delp->datap;
+        this->m_memp->freeObject(delp);
+        return valp;
     }   
 	
 private:
 	int m_size;
     int m_top;
 
-    SLIST<T> m_list;
+    SLIST<struct fifoNode> m_list;
+    FreeList<struct fifoNode> *m_memp;
 };
 
 #endif

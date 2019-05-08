@@ -11,13 +11,15 @@
 template <class T>
 class SLIST {
 public:
-    SLIST(bool bThreadSafe = true)
+    SLIST(bool bThreadSafe = false)
     {
         this->m_headp = NULL;
         this->m_tailp = NULL;
         this->m_bThreadSafe = bThreadSafe;
     }
-    ~SLIST(void);
+    ~SLIST(void)
+    {
+    }
 
     T* search(int const key)
     {
