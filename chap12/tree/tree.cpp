@@ -71,6 +71,23 @@ void Tree::inorderWalk(struct treeNode *x, void (* print)(void *datap))
 }
 
 /*
+ * @lastp: it must be NULL if call the fun first.
+ *
+ * return the result; if it is NULL, means had already walked all tree node
+ */
+struct treeNode * Tree::inorderWalk(struct treeNode *lastp)
+{
+    struct treeNode *nodep = NULL;
+    
+    if (NULL == lastp) {
+        nodep = this->min(m_rootp);
+        return nodep;
+    } else {
+        return this->successor(lastp);
+    }
+}
+
+/*
 struct treeNode * Tree::search(struct treeNode *x, uint32_t const key)
 {
     if (NULL == x || key == x->key)

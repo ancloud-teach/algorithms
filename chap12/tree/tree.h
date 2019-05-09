@@ -26,7 +26,8 @@ public:
     Tree(void);
     ~Tree(void);
     struct treeNode * getRoot(void);    
-    void inorderWalk(struct treeNode *x, void (* print)(void *datap)=NULL);
+    void inorderWalk(struct treeNode *x, void (* print)(void *datap));
+    struct treeNode * inorderWalk(struct treeNode *lastp);
     void insert(struct treeNode *insp);
     struct treeNode * search(struct treeNode *x, uint32_t const key);
     struct treeNode * min(struct treeNode *x);

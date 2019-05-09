@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #include "../init.h"
-#include "./tree.h"
+#include "./tree/tree.h"
 
 int main(int argc, char **argv)
 {
@@ -16,8 +16,17 @@ int main(int argc, char **argv)
     char *str = NULL;
     int value = 0;
 
+    uint32_t data[] = {3,7,10,12,14,15,16,17,19,20,21,23,26,28,30,35,38,39,41,47,48,49,50,51,52,53,54,55,56,57,58,59,60};
+
     Tree tree;
     struct treeNode *nodep, *sucp, *predp;
+
+    for (int i=0; i<sizeof(data)/sizeof(data[0]); i++) {
+        struct treeNode * insTreep = (struct treeNode *)malloc(sizeof(struct treeNode));
+        memset(insTreep, 0, sizeof(struct treeNode));
+        insTreep->key = data[i];
+        tree.insert(insTreep);
+    }
 
     while (1) {
         str = gets(line);
@@ -32,7 +41,17 @@ int main(int argc, char **argv)
         if (!isdigit(line[0])) {
             if (line[0] == 'p') {
                 struct treeNode *rootp = tree.getRoot();
-                tree.inorderWalk(rootp);
+                tree.inorderWalk(rootp, NULL);
+            } else if (line[0] == 'P') {
+                struct treeNode *lastp = NULL;
+                do {
+                    lastp = tree.inorderWalk(lastp);
+                    if (NULL == lastp)
+                        break;
+                    printf("node(0x%x): %d color=%s\t(par=0x%x, left=0x%x, right=0x%x, next=0x%x)--\n", 
+                        (uint32_t)lastp, lastp->key, lastp->color==RED?"Red":"Black",
+                        (uint32_t)lastp->parentp, (uint32_t)lastp->leftp, (uint32_t)lastp->rightp, (uint32_t)lastp->nextp);
+                } while(1);
             } else if (line[0] == 'd') {
                 //- delete
                 uint32_t val = atoi(&line[1]); 

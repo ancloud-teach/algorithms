@@ -32,7 +32,7 @@ TREE=tree
 # check the object
 ifeq ($(MAKECMDGOALS), $(TREE))
 TARGET = $(OUT_PATH)/$(TREE)
-objY  = tree.o
+objY += tree/
 objY += testTree.o
 
 else
