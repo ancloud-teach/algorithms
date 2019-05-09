@@ -40,19 +40,20 @@ int main(int argc, char **argv)
         insRBtreep->key = data[i];
         rbtree.insert(insRBtreep);
     }
-    
+#if 0    
     for (int i=61; i<maxNum; i++) {
-#if 1        
+        
         struct treeNode * insTreep = (struct treeNode *)malloc(sizeof(struct treeNode));
         memset(insTreep, 0, sizeof(struct treeNode));
         insTreep->key = i;
         tree.insert(insTreep);
-#endif        
+        
         struct treeNode * insRBtreep = (struct treeNode *)malloc(sizeof(struct treeNode));
         memset(insRBtreep, 0, sizeof(struct treeNode));
         insRBtreep->key = i;
         rbtree.insert(insRBtreep);
     }
+#endif    
     printf("Init OK\n");
 
     while (1) {
@@ -73,7 +74,9 @@ int main(int argc, char **argv)
                 //- delete
                 uint32_t val = atoi(&line[1]); 
                 nodep = rbtree.search(rbtree.getRoot(), val);
+                APLOG("\n");
                 if (NULL != nodep) {
+                    APLOG("\n");
                     nodep = rbtree.del(nodep);
                     if (NULL != nodep) {
                         APLOG("del node OK. addr=0x%X, val=%d\n", (uint32_t)nodep, nodep->key);

@@ -2,8 +2,10 @@
 
 #include "./RBtree.h"
 
-RBtree::RBtree(void):Tree()
+RBtree::RBtree(void)
 {
+    this->m_rootp = NULL;
+    this->m_size = 0;
     m_NILp = (struct treeNode*)malloc(sizeof(struct treeNode));
     memset(m_NILp, 0, sizeof(struct treeNode));
     m_NILp->color = BLACK;
@@ -44,12 +46,93 @@ void RBtree::inorderWalk(struct treeNode *x, void (* print)(void *datap))
 
 void RBtree::printNode(struct treeNode * x)
 {
-    printf("%s\tnode(0x%x): %d(%s)\t(%4d's %c child, \tpar=0x%x, left=0x%x, right=0x%x, next=0x%x)--\n", 
+    printf("%s\tnode(0x%x): %d(%s)\t(%4d's %c child, \tpar=0x%x(%d), left=0x%x(%d), right=0x%x(%d), next=0x%x)--\n", 
                 x==m_rootp?"Root":"",
                 (uint32_t)x, x->key, x->color==RED?"R":"BL",
                 x->parentp->key, (x==x->parentp->leftp)?'L':'R',
-                (uint32_t)x->parentp, (uint32_t)x->leftp, (uint32_t)x->rightp, (uint32_t)x->nextp);
+                (uint32_t)x->parentp, x->parentp->key,
+                (uint32_t)x->leftp, x->leftp->key,
+                (uint32_t)x->rightp, x->rightp->key,
+                (uint32_t)x->nextp);
+}
 
+struct treeNode * RBtree::getRoot(void)
+{
+    return this->m_rootp;
+}
+
+struct treeNode * RBtree::search(struct treeNode *x, uint32_t const key)
+{    
+    while (x != m_NILp) {
+        if (key == x->key)
+            break;
+        
+        if (key < x->key)
+            x = x->leftp;
+        else 
+            x = x->rightp;
+    }
+
+    return x;
+}
+
+struct treeNode * RBtree::min(struct treeNode *x)
+{
+    if (NULL == x)
+        return NULL;
+    
+    while (m_NILp != x->leftp) {
+        x = x->leftp;
+    }
+    return x;
+}
+
+struct treeNode * RBtree::max(struct treeNode *x)
+{
+    if (m_NILp == x)
+        return NULL;
+    
+    while (m_NILp != x->rightp) {
+        x = x->rightp;
+    }
+    return x;
+}
+
+/*
+ * find the node, whose key > x->key and the node is the min key 
+ */
+struct treeNode * RBtree::successor(struct treeNode *x)
+{
+    if (m_NILp == x)
+        return NULL;
+    
+    if (m_NILp != x->rightp)
+        return this->min(x->rightp);
+
+    struct treeNode *parentp= x->parentp;
+    while (m_NILp!= parentp && x == parentp->rightp){
+        x = parentp;
+        parentp = x->parentp;
+    }
+
+    return parentp;
+}
+
+struct treeNode * RBtree::predecessor(struct treeNode *x)
+{
+    if (m_NILp == x)
+        return NULL;
+    
+    if (m_NILp != x->leftp)
+        return this->max(x->leftp);
+
+    struct treeNode *parentp= x->parentp;
+    while (m_NILp!= parentp && x == parentp->leftp){
+        x = parentp;
+        parentp = x->parentp;
+    }
+
+    return parentp;
 }
 
 
@@ -85,9 +168,7 @@ void RBtree::insert(struct treeNode *z)
 }
 
 void RBtree::insertFixup(struct treeNode *z)
-{
-    struct treeNode *parentp;
-    
+{    
     while (z->parentp->color == RED) {
         if (z->parentp == z->parentp->parentp->leftp) {
             struct treeNode *y = z->parentp->parentp->rightp;
@@ -195,24 +276,159 @@ void RBtree::rightRotate(struct treeNode *y)
 }
 #endif
 
-/*
-struct treeNode * RBtree::del(struct treeNode * delp)
+
+void RBtree::transplant(struct treeNode *dstp, struct treeNode *srcp)
 {
-    if (NULL == delp->leftp) {
-        this->transplant(delp, delp->rightp);
-    } else if (NULL == delp->rightp) {
-        this->transplant(delp, delp->leftp);
+    if (m_NILp == dstp->parentp){
+        this->m_rootp = srcp;
+    } else if (dstp == dstp->parentp->leftp) {
+        dstp->parentp->leftp = srcp;
     } else {
-        struct treeNode *y = this->min(delp->rightp);
-        if (y->parentp != delp) {
-            this->transplant(y, y->rightp);
-            y->rightp = delp->rightp;
-            y->rightp->parentp = y;
-        }
-        this->transplant(delp, y);
-        y->leftp = delp->leftp;
-        y->leftp->parentp = y;
+        dstp->parentp->rightp = srcp;
     }
-    return delp;
+    srcp->parentp = dstp->parentp;    
 }
-*/
+struct treeNode * RBtree::del(struct treeNode * nodep)
+{
+    struct treeNode *parentp=NULL, *childp=NULL;
+    enum RBColor color;
+
+    if (nodep->leftp != m_NILp && nodep->rightp != m_NILp) {
+        struct treeNode *replacep = nodep;
+        
+        replacep = this->min(nodep->rightp);
+        childp = replacep->rightp;
+        parentp = replacep->parentp;
+        color = replacep->color;
+        
+        this->transplant(nodep, replacep);
+
+        if (parentp == nodep) {
+            parentp = replacep;
+        } else {
+            if (childp != m_NILp)
+                childp->parentp = parentp;
+            parentp->leftp = childp;
+            replacep->rightp = nodep->rightp;
+            nodep->rightp->parentp = replacep;
+        }
+
+        replacep->color = nodep->color;
+        replacep->leftp = nodep->leftp;
+        nodep->leftp->parentp = replacep;
+
+        if (color == BLACK) {
+            this->delFixUp(childp, parentp);
+        }
+
+        return nodep;
+    }
+    
+    if (nodep->leftp != m_NILp){
+        childp = nodep->leftp;
+    } else {
+        childp = nodep->rightp;
+    }
+
+    parentp = nodep->parentp;
+    color = nodep->color;
+    
+    if (childp != m_NILp) {
+        childp->parentp = parentp;
+    }
+    
+    if (parentp == m_NILp) {
+        m_rootp = childp;
+    } else {
+        if (nodep == parentp->leftp) {
+            parentp->leftp = childp;
+        } else {
+            parentp->rightp = childp;
+        }
+    }
+
+    if (color ==BLACK) {
+        this->delFixUp(childp, parentp);
+    }
+    return nodep; 
+}
+
+void RBtree::delFixUp(struct treeNode *nodep, struct treeNode *parentp)
+{
+    struct treeNode *brother;
+    
+    while((nodep!=m_NILp || nodep->color == BLACK) && nodep != m_rootp) {
+        if (nodep == parentp->leftp) {
+            brother = parentp->rightp;
+
+            if (brother->color == RED) {
+                //- case 1:
+                brother->color = BLACK;
+                parentp->color = RED;
+                this->leftRotate(parentp);
+                brother = parentp->rightp;
+            }
+            
+            if ((brother->leftp!=m_NILp && brother->leftp->color==BLACK) &&
+                (brother->rightp!=m_NILp && brother->rightp->color==BLACK) ) {
+                //- case 2
+                brother->color = RED;
+                nodep = parentp;
+                parentp = nodep->parentp;
+            } else {
+                if (brother->rightp!=m_NILp && brother->rightp->color==BLACK) {
+                    //- case 3
+                    brother->leftp->color = BLACK;
+                    brother->color = RED;
+                    this->rightRotate(brother);
+                    brother = parentp->rightp;
+                }
+
+                //- case 4
+                brother->color = parentp->color;
+                parentp->color = BLACK;
+                brother->rightp->color = BLACK;
+                this->leftRotate(parentp);
+                nodep = m_rootp;
+                break;
+            }
+        } else  {
+            brother = parentp->leftp;
+
+            if (brother->color == RED) {
+                //- case 1:
+                brother->color = BLACK;
+                parentp->color = RED;
+                this->rightRotate(parentp);
+                brother = parentp->leftp;
+            }
+            if ((brother->leftp!=m_NILp && brother->leftp->color==BLACK) &&
+                (brother->rightp!=m_NILp && brother->rightp->color==BLACK) ) {
+                //- case 2
+                brother->color = RED;
+                nodep = parentp;
+                parentp = nodep->parentp;
+            } else {
+                if (brother->leftp!=m_NILp && brother->leftp->color==BLACK) {
+                    //- case 3
+                    brother->rightp->color = BLACK;
+                    brother->color = RED;
+                    this->leftRotate(brother);
+                    brother = parentp->leftp;
+                }
+
+                //- case 4
+                brother->color = parentp->color;
+                parentp->color = BLACK;
+                brother->leftp->color = BLACK;
+                this->rightRotate(parentp);
+                nodep = m_rootp;
+                break;
+            }
+        }
+
+        if (nodep != m_NILp){
+            nodep->color = BLACK;
+        }
+    }
+}
