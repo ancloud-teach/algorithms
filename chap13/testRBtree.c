@@ -30,15 +30,13 @@ int main(int argc, char **argv)
     struct treeNode *nodep, *sucp, *predp;
 
     for (int i=0; i<sizeof(data)/sizeof(data[0]); i++) {
+/*        
         struct treeNode * insTreep = (struct treeNode *)malloc(sizeof(struct treeNode));
         memset(insTreep, 0, sizeof(struct treeNode));
         insTreep->key = data[i];
         tree.insert(insTreep);
-        
-        struct treeNode * insRBtreep = (struct treeNode *)malloc(sizeof(struct treeNode));
-        memset(insRBtreep, 0, sizeof(struct treeNode));
-        insRBtreep->key = data[i];
-        rbtree.insert(insRBtreep);
+*/        
+        rbtree.insert(data[i], NULL);
     }
 #if 0    
     for (int i=61; i<maxNum; i++) {
@@ -69,20 +67,19 @@ int main(int argc, char **argv)
         if (!isdigit(line[0])) {
             if (line[0] == 'p') {
                 struct treeNode *rootp = rbtree.getRoot();
-                rbtree.inorderWalk(rootp);
+                rbtree.inorderWalk(rootp, NULL);
+            } else if (line[0] == 'P') {
+                struct treeNode *lastp = NULL;
+                do {
+                    lastp = rbtree.inorderWalk(lastp);
+                    if (NULL == lastp)
+                        break;
+                    rbtree.printNode(lastp);
+                } while(1);
             } else if (line[0] == 'd') {
                 //- delete
                 uint32_t val = atoi(&line[1]); 
-                nodep = rbtree.search(rbtree.getRoot(), val);
-                APLOG("\n");
-                if (NULL != nodep) {
-                    APLOG("\n");
-                    nodep = rbtree.del(nodep);
-                    if (NULL != nodep) {
-                        APLOG("del node OK. addr=0x%X, val=%d\n", (uint32_t)nodep, nodep->key);
-                        free(nodep);
-                    } 
-                }
+                rbtree.del(val);
             }else {
                 if (line[0] == 's'){
                     //- search
@@ -131,10 +128,7 @@ int main(int argc, char **argv)
         } else {
             value = atoi(line);
             printf("insert value=%d + \n", value);
-            struct treeNode * insp = (struct treeNode *)malloc(sizeof(struct treeNode));
-            memset(insp, 0, sizeof(struct treeNode));
-            insp->key = value;
-            rbtree.insert(insp);
+            rbtree.insert(value, NULL);
         }
     }
 }

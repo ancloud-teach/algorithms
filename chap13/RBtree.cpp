@@ -44,6 +44,24 @@ void RBtree::inorderWalk(struct treeNode *x, void (* print)(void *datap))
     this->inorderWalk(x->rightp, print);
 }
 
+/*
+ * @lastp: it must be NULL if call the fun first.
+ *
+ * return the result; if it is NULL, means had already walked all tree node
+ */
+struct treeNode * RBtree::inorderWalk(struct treeNode *lastp)
+{
+    struct treeNode *nodep = NULL;
+    
+    if (NULL == lastp) {
+        nodep = this->min(m_rootp);
+        return nodep;
+    } else {
+        return this->successor(lastp);
+    }
+}
+
+
 void RBtree::printNode(struct treeNode * x)
 {
     printf("%s\tnode(0x%x): %d(%s)\t(%4d's %c child, \tpar=0x%x(%d), left=0x%x(%d), right=0x%x(%d), next=0x%x)--\n", 
@@ -135,9 +153,15 @@ struct treeNode * RBtree::predecessor(struct treeNode *x)
     return parentp;
 }
 
-
-void RBtree::insert(struct treeNode *z)
-{        
+struct treeNode* RBtree::insert(uint64_t key, void *datap)
+{      
+    struct treeNode * z = (struct treeNode*)malloc(sizeof(struct treeNode));
+    if (NULL == z)
+        return NULL;
+    memset(z, 0, sizeof(struct treeNode));
+    z->key = key;
+    z->datap =datap;
+    
     z->parentp = m_NILp;
     
     struct treeNode *y = m_NILp;
@@ -165,6 +189,8 @@ void RBtree::insert(struct treeNode *z)
     this->insertFixup(z);
 
     this->m_size++;
+
+    return z;
 }
 
 void RBtree::insertFixup(struct treeNode *z)
@@ -288,7 +314,17 @@ void RBtree::transplant(struct treeNode *dstp, struct treeNode *srcp)
     }
     srcp->parentp = dstp->parentp;    
 }
-struct treeNode * RBtree::del(struct treeNode * nodep)
+
+void * RBtree::del(uint64_t lID)
+{
+    struct treeNode *nodep = this->search(this->m_rootp, lID);
+    if (NULL == nodep) {
+        return NULL;
+    }
+    return this->del(nodep);
+}
+
+void * RBtree::del(struct treeNode * nodep)
 {
     struct treeNode *parentp=NULL, *childp=NULL;
     enum RBColor color;
@@ -321,7 +357,7 @@ struct treeNode * RBtree::del(struct treeNode * nodep)
             this->delFixUp(childp, parentp);
         }
 
-        return nodep;
+        goto DEL;
     }
     
     if (nodep->leftp != m_NILp){
@@ -350,6 +386,12 @@ struct treeNode * RBtree::del(struct treeNode * nodep)
     if (color ==BLACK) {
         this->delFixUp(childp, parentp);
     }
+
+DEL:
+    void *datap = nodep->datap;
+    free(nodep);
+
+    m_size--;
     return nodep; 
 }
 

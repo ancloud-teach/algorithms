@@ -18,15 +18,17 @@ public:
     struct treeNode * max(struct treeNode *x);
     struct treeNode * successor(struct treeNode *x);
     struct treeNode * predecessor(struct treeNode *x);
-    void inorderWalk(struct treeNode *x, void (* print)(void *datap)=NULL);
-    void insert(struct treeNode *insp);    
-    struct treeNode * del(struct treeNode * nodep);
+    void printNode(struct treeNode * x);
+    void inorderWalk(struct treeNode *x, void (* print)(void *datap));
+    struct treeNode * inorderWalk(struct treeNode *lastp);
+    struct treeNode* insert(uint64_t key, void *datap);
+    void * del(uint64_t lID);
+    void * del(struct treeNode * nodep);
 
 private:
     void insertFixup(struct treeNode *z);
     void leftRotate(struct treeNode *x);
-    void rightRotate(struct treeNode *x);
-    void printNode(struct treeNode * x);
+    void rightRotate(struct treeNode *x);    
     void transplant(struct treeNode *dstp, struct treeNode *srcp);
     void delFixUp(struct treeNode *nodep, struct treeNode *parentp);
 
