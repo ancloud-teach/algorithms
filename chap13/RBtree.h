@@ -13,7 +13,8 @@ public:
     ~RBtree(void);
 
     struct treeNode * getRoot(void);
-    struct treeNode * search(struct treeNode *x, uint32_t const key);
+    int size(void);
+    struct treeNode * search(struct treeNode *x, uint64_t const key);
     struct treeNode * min(struct treeNode *x);
     struct treeNode * max(struct treeNode *x);
     struct treeNode * successor(struct treeNode *x);
@@ -21,6 +22,8 @@ public:
     void printNode(struct treeNode * x);
     void inorderWalk(struct treeNode *x, void (* print)(void *datap));
     struct treeNode * inorderWalk(struct treeNode *lastp);
+    int checkWalk(struct treeNode *nodep, int blackNum);
+    int check(void);
     struct treeNode* insert(uint64_t key, void *datap);
     void * del(uint64_t lID);
     void * del(struct treeNode * nodep);

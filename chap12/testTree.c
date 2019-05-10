@@ -21,12 +21,14 @@ int main(int argc, char **argv)
     Tree tree;
     struct treeNode *nodep, *sucp, *predp;
 
+#if 0
     for (int i=0; i<sizeof(data)/sizeof(data[0]); i++) {
         struct treeNode * insTreep = (struct treeNode *)malloc(sizeof(struct treeNode));
         memset(insTreep, 0, sizeof(struct treeNode));
         insTreep->key = data[i];
         tree.insert(insTreep);
     }
+#endif
 
     while (1) {
         str = gets(line);

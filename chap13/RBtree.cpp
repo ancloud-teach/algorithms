@@ -30,7 +30,7 @@ void RBtree::inorderWalk(struct treeNode *x, void (* print)(void *datap))
         print(x->datap);
     struct treeNode *samep = x->nextp;
     while (NULL != samep) {
-        printf("same(0x%x): %d\t(par=%d(0x%x), left=%d(0x%x), right=%d(0x%x), next=%d(0x%x)\n", (uint32_t)samep, samep->key,
+        printf("same(0x%x): %lld\t(par=%lld(0x%x), left=%lld(0x%x), right=%lld(0x%x), next=%lld(0x%x)\n", (uint32_t)samep, samep->key,
             samep->parentp->key,(uint32_t)samep->parentp, 
             samep->leftp->key,  (uint32_t)samep->leftp, 
             samep->rightp->key, (uint32_t)samep->rightp, 
@@ -61,10 +61,49 @@ struct treeNode * RBtree::inorderWalk(struct treeNode *lastp)
     }
 }
 
+int RBtree::checkWalk(struct treeNode *nodep, int blackNum)
+{
+    if (nodep == m_NILp)
+        return 0;
+
+    if (nodep->color == BLACK) {
+        blackNum++;
+    }
+    
+    checkWalk(nodep->leftp, blackNum);
+
+    checkWalk(nodep->rightp, blackNum);
+
+    if (nodep->color == RED) {
+        if (nodep->leftp->color != BLACK ) {
+            printf("the node(%lld) color is RED, but the left(%lld) is NOT BLACK\n",
+                nodep->key, nodep->leftp->key);
+            return -2;
+        }
+        if (nodep->rightp->color != BLACK ) {
+            printf("the node(%lld) color is RED, but the right(%lld) is NOT BLACK\n",
+                nodep->key, nodep->rightp->key);
+            return -3;
+        }
+    }
+    if (nodep->leftp==m_NILp && nodep->rightp==m_NILp) {
+        printf("node(%lld) black color num=%d\n", nodep->key,blackNum);
+    }
+    
+    return 0;
+}
+int RBtree::check(void)
+{
+    if (m_rootp->color != BLACK) {
+        return -1;
+    }
+
+    return checkWalk(this->getRoot(), 0);
+}
 
 void RBtree::printNode(struct treeNode * x)
 {
-    printf("%s\tnode(0x%x): %d(%s)\t(%4d's %c child, \tpar=0x%x(%d), left=0x%x(%d), right=0x%x(%d), next=0x%x)--\n", 
+    printf("%s\tnode(0x%x): %lld(%s)\t(%4lld's %c child, \tpar=0x%x(%lld), left=0x%x(%lld), right=0x%x(%lld), next=0x%x)--\n", 
                 x==m_rootp?"Root":"",
                 (uint32_t)x, x->key, x->color==RED?"R":"BL",
                 x->parentp->key, (x==x->parentp->leftp)?'L':'R',
@@ -79,7 +118,13 @@ struct treeNode * RBtree::getRoot(void)
     return this->m_rootp;
 }
 
-struct treeNode * RBtree::search(struct treeNode *x, uint32_t const key)
+int RBtree::size(void)
+{
+    return m_size;
+}
+
+
+struct treeNode * RBtree::search(struct treeNode *x, uint64_t const key)
 {    
     while (x != m_NILp) {
         if (key == x->key)
@@ -91,7 +136,10 @@ struct treeNode * RBtree::search(struct treeNode *x, uint32_t const key)
             x = x->rightp;
     }
 
-    return x;
+    if (m_NILp == x) 
+        return NULL;
+    else
+        return x;
 }
 
 struct treeNode * RBtree::min(struct treeNode *x)
@@ -392,7 +440,7 @@ DEL:
     free(nodep);
 
     m_size--;
-    return nodep; 
+    return datap; 
 }
 
 void RBtree::delFixUp(struct treeNode *nodep, struct treeNode *parentp)

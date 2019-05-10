@@ -23,21 +23,52 @@ int main(int argc, char **argv)
     char *str = NULL;
     int value = 0;
 
-    uint32_t data[] = {3,7,10,12,14,15,16,17,19,20,21,23,26,28,30,35,38,39,41,47,48,49,50,51,52,53,54,55,56,57,58,59,60};
-
     Tree tree;
     RBtree rbtree;
     struct treeNode *nodep, *sucp, *predp;
 
-    for (int i=0; i<sizeof(data)/sizeof(data[0]); i++) {
-/*        
-        struct treeNode * insTreep = (struct treeNode *)malloc(sizeof(struct treeNode));
-        memset(insTreep, 0, sizeof(struct treeNode));
-        insTreep->key = data[i];
-        tree.insert(insTreep);
-*/        
+#if 0
+    int data[] = {3,7,10,12,14,15,16,17,19,20,21,23,26,28,30,35,38,39,41,47,48,49,50,51,52,53,54,55,56,57,58,59,60};
+    for (int i=0; i<sizeof(data)/sizeof(data[0]); i++) {       
         rbtree.insert(data[i], NULL);
     }
+
+#else    
+    int *datap = (int*)malloc(sizeof(int)*maxNum);
+    int r=0;
+    for (int i=0; i<maxNum; i++) {
+        r = rand()%maxNum;
+        
+        //printf("%d ", r);
+        nodep = rbtree.search(rbtree.getRoot(), r);
+        if (NULL != nodep) {
+            datap[i] = -1;
+            continue;
+        }
+        rbtree.insert(r, NULL);
+        datap[i] = r;    
+    }
+    printf("\n");
+
+    APLOG("tree size=%d\n", rbtree.size());
+    for (int i=0; i<maxNum; i++) {
+        //r = rand()%maxNum;
+        if (datap[i] < 0)
+            continue;
+        
+        nodep = rbtree.search(rbtree.getRoot(), datap[i]);
+        if (NULL == nodep) {
+            APLOG("Err cant find the  key(%d), i=%d!!!!\n", datap[i], i);
+            return -1;
+        }
+    }
+
+    int ret = rbtree.check();
+    if (ret < 0) {
+        APLOG("rbtree check error(%d)\n", ret);
+    }
+#endif
+
 #if 0    
     for (int i=61; i<maxNum; i++) {
         
@@ -106,18 +137,18 @@ int main(int argc, char **argv)
                 }
 
                 if (NULL != nodep) {
-                    APLOG("search result: node addr=0x%X val=%d\n", (uint32_t)nodep, nodep->key);
+                    APLOG("search result: node addr=0x%X val=%lld\n", (uint32_t)nodep, nodep->key);
 
                     sucp = rbtree.successor(nodep);
                     if (NULL != sucp) {
-                        APLOG("successor: addr=0x%X, val=%d\n", (uint32_t)sucp, sucp->key);
+                        APLOG("successor: addr=0x%X, val=%lld\n", (uint32_t)sucp, sucp->key);
                     } else {
                         APLOG("Can't find the successor!!!\n");
                     }
 
                     predp = rbtree.predecessor(nodep);
                     if (NULL != predp) {
-                        APLOG("predecessor: addr=0x%X, val=%d\n", (uint32_t)predp, predp->key);
+                        APLOG("predecessor: addr=0x%X, val=%lld\n", (uint32_t)predp, predp->key);
                     } else {
                         APLOG("Can't find the predecessor!!!\n");
                     }

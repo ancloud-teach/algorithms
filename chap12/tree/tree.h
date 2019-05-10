@@ -8,7 +8,7 @@ enum RBColor {
     RED
 };
 struct treeNode {
-    uint32_t key;
+    uint64_t key;
     struct treeNode *leftp;
     struct treeNode *rightp;
     struct treeNode *nextp;
