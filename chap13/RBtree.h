@@ -22,7 +22,7 @@ public:
     void printNode(struct treeNode * x);
     void inorderWalk(struct treeNode *x, void (* print)(void *datap));
     struct treeNode * inorderWalk(struct treeNode *lastp);
-    int checkWalk(struct treeNode *nodep, int blackNum);
+    int checkWalk(struct treeNode *nodep, int blackNum, int *blackNumMaxp);
     int check(void);
     struct treeNode* insert(uint64_t key, void *datap);
     void * del(uint64_t lID);

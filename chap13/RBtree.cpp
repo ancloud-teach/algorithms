@@ -61,7 +61,7 @@ struct treeNode * RBtree::inorderWalk(struct treeNode *lastp)
     }
 }
 
-int RBtree::checkWalk(struct treeNode *nodep, int blackNum)
+int RBtree::checkWalk(struct treeNode *nodep, int blackNum, int *blackNumMaxp)
 {
     if (nodep == m_NILp)
         return 0;
@@ -70,9 +70,9 @@ int RBtree::checkWalk(struct treeNode *nodep, int blackNum)
         blackNum++;
     }
     
-    checkWalk(nodep->leftp, blackNum);
+    checkWalk(nodep->leftp, blackNum, blackNumMaxp);
 
-    checkWalk(nodep->rightp, blackNum);
+    checkWalk(nodep->rightp, blackNum, blackNumMaxp);
 
     if (nodep->color == RED) {
         if (nodep->leftp->color != BLACK ) {
@@ -87,7 +87,16 @@ int RBtree::checkWalk(struct treeNode *nodep, int blackNum)
         }
     }
     if (nodep->leftp==m_NILp && nodep->rightp==m_NILp) {
-        printf("node(%lld) black color num=%d\n", nodep->key,blackNum);
+        if (*blackNumMaxp == 0) 
+            *blackNumMaxp = blackNum;
+        else {
+            if (blackNum != *blackNumMaxp) {
+                printf("node(%lld) black color num=%d, but the other is %d\n", 
+                    nodep->key,blackNum, *blackNumMaxp);
+                return -4;
+            }
+        }
+        
     }
     
     return 0;
@@ -98,7 +107,12 @@ int RBtree::check(void)
         return -1;
     }
 
-    return checkWalk(this->getRoot(), 0);
+    int blackNumMAx = 0;
+    int ret = checkWalk(this->getRoot(), 0, &blackNumMAx);
+
+    APLOG("the black num max=%d, size=%d\n", blackNumMAx, this->size());
+    
+    return ret;
 }
 
 void RBtree::printNode(struct treeNode * x)
@@ -372,12 +386,16 @@ void * RBtree::del(uint64_t lID)
     return this->del(nodep);
 }
 
+#if 0
+
 void * RBtree::del(struct treeNode * nodep)
 {
+    APLOG("\n");
     struct treeNode *parentp=NULL, *childp=NULL;
     enum RBColor color;
 
     if (nodep->leftp != m_NILp && nodep->rightp != m_NILp) {
+        APLOG("\n");
         struct treeNode *replacep = nodep;
         
         replacep = this->min(nodep->rightp);
@@ -401,6 +419,8 @@ void * RBtree::del(struct treeNode * nodep)
         replacep->leftp = nodep->leftp;
         nodep->leftp->parentp = replacep;
 
+        APLOG("\n");
+
         if (color == BLACK) {
             this->delFixUp(childp, parentp);
         }
@@ -413,6 +433,8 @@ void * RBtree::del(struct treeNode * nodep)
     } else {
         childp = nodep->rightp;
     }
+
+    APLOG("\n");
 
     parentp = nodep->parentp;
     color = nodep->color;
@@ -431,6 +453,8 @@ void * RBtree::del(struct treeNode * nodep)
         }
     }
 
+    APLOG("\n");
+
     if (color ==BLACK) {
         this->delFixUp(childp, parentp);
     }
@@ -446,79 +470,220 @@ DEL:
 void RBtree::delFixUp(struct treeNode *nodep, struct treeNode *parentp)
 {
     struct treeNode *brother;
+
+    APLOG("\n");
     
-    while((nodep!=m_NILp || nodep->color == BLACK) && nodep != m_rootp) {
+    while((nodep!=m_NILp && nodep->color == BLACK) && nodep != m_rootp) { /* (nodep!=m_NILp || nodep->color == BLACK) ???????*/
         if (nodep == parentp->leftp) {
             brother = parentp->rightp;
 
             if (brother->color == RED) {
+                APLOG(" l case1\n");
                 //- case 1:
                 brother->color = BLACK;
+                APLOG("\n");
                 parentp->color = RED;
+                APLOG("\n");
+                
                 this->leftRotate(parentp);
+                APLOG("\n");
                 brother = parentp->rightp;
+                APLOG("\n");
+            }
+            APLOG(" brother=0x%x, left=0x%x, right=0x%x\n", brother, brother->leftp, brother->rightp);
+            if (brother != m_NILp) {
+                if ((brother->leftp!=m_NILp && brother->leftp->color==BLACK) && 
+                     brother->rightp!=m_NILp && (brother->rightp->color==BLACK) ) {
+                    APLOG(" l case2\n");
+                    //- case 2
+                    brother->color = RED;
+                    nodep = parentp;
+                    parentp = nodep->parentp;
+                } else {
+                    APLOG("\n");
+                    if (brother->rightp!=m_NILp && brother->rightp->color==BLACK) {
+                        APLOG(" l case3\n");
+                        //- case 3
+                        brother->leftp->color = BLACK;
+                        brother->color = RED;
+                        this->rightRotate(brother);
+                        brother = parentp->rightp;
+                    }
+
+                    //- case 4
+                    APLOG(" l case4\n");
+                    brother->color = parentp->color;
+                    parentp->color = BLACK;
+                    brother->rightp->color = BLACK;
+                    this->leftRotate(parentp);
+                    nodep = m_rootp;
+                    break;
+                }
             }
             
-            if ((brother->leftp!=m_NILp && brother->leftp->color==BLACK) &&
-                (brother->rightp!=m_NILp && brother->rightp->color==BLACK) ) {
-                //- case 2
-                brother->color = RED;
-                nodep = parentp;
-                parentp = nodep->parentp;
-            } else {
-                if (brother->rightp!=m_NILp && brother->rightp->color==BLACK) {
-                    //- case 3
-                    brother->leftp->color = BLACK;
-                    brother->color = RED;
-                    this->rightRotate(brother);
-                    brother = parentp->rightp;
-                }
-
-                //- case 4
-                brother->color = parentp->color;
-                parentp->color = BLACK;
-                brother->rightp->color = BLACK;
-                this->leftRotate(parentp);
-                nodep = m_rootp;
-                break;
-            }
         } else  {
             brother = parentp->leftp;
 
             if (brother->color == RED) {
                 //- case 1:
+                APLOG(" r case1\n");
                 brother->color = BLACK;
                 parentp->color = RED;
                 this->rightRotate(parentp);
                 brother = parentp->leftp;
             }
-            if ((brother->leftp!=m_NILp && brother->leftp->color==BLACK) &&
-                (brother->rightp!=m_NILp && brother->rightp->color==BLACK) ) {
+            if (brother != m_NILp) {
+                if ((brother->leftp!=m_NILp && brother->leftp->color==BLACK) &&
+                    (brother->rightp!=m_NILp && brother->rightp->color==BLACK) ) {
+                    //- case 2
+                    APLOG(" r case2\n");
+                    brother->color = RED;
+                    nodep = parentp;
+                    parentp = nodep->parentp;
+                } else {
+                    if (brother->leftp!=m_NILp && brother->leftp->color==BLACK) {
+                        //- case 3
+                        APLOG(" r case3\n");
+                        brother->rightp->color = BLACK;
+                        brother->color = RED;
+                        this->leftRotate(brother);
+                        brother = parentp->leftp;
+                    }
+
+                    //- case 4
+                    APLOG(" r case4\n");
+                    brother->color = parentp->color;
+                    parentp->color = BLACK;
+                    brother->leftp->color = BLACK;
+                    this->rightRotate(parentp);
+                    nodep = m_rootp;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (nodep != m_NILp){
+        nodep->color = BLACK;
+    }
+}
+#endif
+
+void * RBtree::del(struct treeNode * z)
+{
+    struct treeNode *parentp=NULL, *childp=NULL;
+    enum RBColor color;
+
+    struct treeNode *y = z;
+    struct treeNode *x;
+    color = y->color;
+
+    if (z->leftp == m_NILp) {
+        x = z->rightp;
+        this->transplant(z, z->rightp);
+    
+    } else if (z->rightp == m_NILp) {
+        x = z->leftp;
+        this->transplant(z, z->leftp);
+    } else {
+        y = this->min(z->rightp);
+        color = y->color;
+        
+        x = y->rightp;
+        if (y->parentp == z) {
+            x->parentp = y;
+        } else {
+            this->transplant(y, y->rightp);
+            y->rightp = z->rightp;
+            y->rightp->parentp = y;
+        }
+        this->transplant(z, y);
+        y->leftp = z->leftp;
+        y->leftp->parentp = y;
+        y->color = z->color;
+    }
+    if (color == BLACK) {
+        this->delFixUp(x, NULL);
+    }
+
+    void * datap = z->datap;
+    free(z);
+
+    m_size--;
+    return datap;
+}
+
+void RBtree::delFixUp(struct treeNode *nodep, struct treeNode *ssss)
+{
+    struct treeNode *brother;
+    
+    while(nodep != m_rootp && nodep->color == BLACK) {
+        if (nodep == nodep->parentp->leftp) {
+            brother = nodep->parentp->rightp;
+
+            if (brother->color == RED) {
+                //- case 1:
+                brother->color = BLACK;
+                nodep->parentp->color = RED;
+                this->leftRotate(nodep->parentp);
+                brother = nodep->parentp->rightp;
+            }
+            if (brother->leftp->color==BLACK && brother->rightp->color==BLACK) {
                 //- case 2
                 brother->color = RED;
-                nodep = parentp;
-                parentp = nodep->parentp;
+                nodep = nodep->parentp;
             } else {
-                if (brother->leftp!=m_NILp && brother->leftp->color==BLACK) {
+                if (brother->rightp->color==BLACK) {
+                    //- case 3
+                    brother->leftp->color = BLACK;
+                    brother->color = RED;
+                    this->rightRotate(brother);
+                    brother = nodep->parentp->rightp;
+                }
+
+                //- case 4
+                brother->color = nodep->parentp->color;
+                nodep->parentp->color = BLACK;
+                brother->rightp->color = BLACK;
+                this->leftRotate(nodep->parentp);
+                nodep = m_rootp;
+                break;
+            }
+            
+        } else  {
+            brother = nodep->parentp->leftp;
+
+            if (brother->color == RED) {
+                //- case 1:
+                brother->color = BLACK;
+                nodep->parentp->color = RED;
+                this->rightRotate(nodep->parentp);
+                brother = nodep->parentp->leftp;
+            }
+            if (brother->leftp->color==BLACK && brother->rightp->color==BLACK) {
+                //- case 2
+                brother->color = RED;
+                nodep = nodep->parentp;
+            } else {
+                if (brother->leftp->color==BLACK) {
                     //- case 3
                     brother->rightp->color = BLACK;
                     brother->color = RED;
                     this->leftRotate(brother);
-                    brother = parentp->leftp;
+                    brother = nodep->parentp->leftp;
                 }
 
                 //- case 4
-                brother->color = parentp->color;
-                parentp->color = BLACK;
+                brother->color = nodep->parentp->color;
+                nodep->parentp->color = BLACK;
                 brother->leftp->color = BLACK;
-                this->rightRotate(parentp);
+                this->rightRotate(nodep->parentp);
                 nodep = m_rootp;
                 break;
             }
         }
-
-        if (nodep != m_NILp){
-            nodep->color = BLACK;
-        }
     }
+
+    nodep->color = BLACK;
 }
+

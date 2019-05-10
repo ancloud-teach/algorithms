@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-    int maxNum= 100;
+    int maxNum= 20;
     if (argc ==2) {
         int powNum = atoi(argv[1]);
         maxNum = (int)pow(10, powNum);
@@ -39,7 +39,6 @@ int main(int argc, char **argv)
     for (int i=0; i<maxNum; i++) {
         r = rand()%maxNum;
         
-        //printf("%d ", r);
         nodep = rbtree.search(rbtree.getRoot(), r);
         if (NULL != nodep) {
             datap[i] = -1;
@@ -48,11 +47,9 @@ int main(int argc, char **argv)
         rbtree.insert(r, NULL);
         datap[i] = r;    
     }
-    printf("\n");
 
     APLOG("tree size=%d\n", rbtree.size());
     for (int i=0; i<maxNum; i++) {
-        //r = rand()%maxNum;
         if (datap[i] < 0)
             continue;
         
@@ -62,10 +59,66 @@ int main(int argc, char **argv)
             return -1;
         }
     }
-
     int ret = rbtree.check();
     if (ret < 0) {
         APLOG("rbtree check error(%d)\n", ret);
+    }
+
+    //- test the delete
+    printf("\n");
+    APLOG("Check the delete\n");
+    for (int i=0; i<maxNum; i++) {
+        r = rand()%maxNum;
+        if (datap[r] < 0)
+            continue;
+
+        //- search all other nodes
+        rbtree.del(datap[r]);
+        datap[r] = -1;
+        for (int j=0; j<maxNum; j++) {
+            if (datap[j] < 0)
+                continue;
+            
+            nodep = rbtree.search(rbtree.getRoot(), datap[j]);
+            if (NULL == nodep) {
+                APLOG("Err cant find the  key(%d), i=%d!!!!\n", datap[j], j);
+                return -1;
+            }
+        } 
+
+        //- check the rbtree
+        int ret = rbtree.check();
+        if (ret < 0) {
+            APLOG("rbtree check error(%d)\n", ret);
+            return -2;
+        }      
+    }   
+    for (int i=0; i<maxNum; i++) {
+        if (datap[i] < 0){
+            continue;
+        }
+        
+        rbtree.del(datap[i]);
+        datap[i] = -1;
+
+        //- search all other nodes
+        for (int j=0; j<maxNum; j++) {
+            if (datap[j] < 0)
+                continue;
+            
+            nodep = rbtree.search(rbtree.getRoot(), datap[j]);
+            if (NULL == nodep) {
+                APLOG("Err cant find the  key(%d), i=%d!!!!\n", datap[j], j);
+                return -1;
+            }
+        } 
+
+        //- check the rbtree
+        int ret = rbtree.check();
+        if (ret < 0) {
+            APLOG("rbtree check error(%d)\n", ret);
+            return -2;
+        }
     }
 #endif
 
