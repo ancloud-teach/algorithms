@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     int *datap = (int*)malloc(sizeof(int)*maxNum);
     int r=0;
     for (int i=0; i<maxNum; i++) {
-        r = rand()%maxNum;
+        r = rand();
         
         nodep = rbtree.search(rbtree.getRoot(), r);
         if (NULL != nodep) {
